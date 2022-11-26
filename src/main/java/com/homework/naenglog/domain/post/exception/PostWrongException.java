@@ -8,6 +8,6 @@ public class PostWrongException extends BusinessException {
     public static final PostWrongException EXCEPTION = new PostWrongException();
 
     private PostWrongException() {
-        super(HttpStatus.FORBIDDEN, "접근 권한이 없는 게시글입니다");
+        super(HttpStatus.BAD_REQUEST, "접근 권한이 없는 게시글입니다");
     }
 }

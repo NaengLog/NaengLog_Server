@@ -11,7 +11,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Slf4j
@@ -23,7 +22,6 @@ public class JwtProvider {
     private final JwtProperties jwtProperties;
 
     public String generateAccessToken(Long id) {
-        log.info("secretKey : " + jwtProperties.getSecretKey() + " exp : " + jwtProperties.getAccessExp());
         return generateToken(id.toString(), jwtProperties.getAccessExp());
     }
 

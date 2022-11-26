@@ -24,9 +24,6 @@ public class PostController {
     public Long creatPost(
             @RequestBody CreatePostRequest request
     ) {
-        log.info("title : " +request.getTitle());
-        log.info("content : " +request.getContent());
-        log.info("attachments : " + request.getAttachments().toString());
         return postService.createPost(request);
     }
 

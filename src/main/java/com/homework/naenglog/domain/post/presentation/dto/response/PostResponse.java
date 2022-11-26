@@ -16,7 +16,7 @@ public class PostResponse {
 
     private String content;
 
-    private Long author_id;
+    private String author;
 
     private String createdAt;
 

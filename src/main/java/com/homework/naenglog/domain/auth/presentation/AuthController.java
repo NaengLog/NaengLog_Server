@@ -9,13 +9,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/user")
 @RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/sign-up")
+    @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public void signUp(
             @RequestBody SignUpRequest request
@@ -23,7 +23,7 @@ public class AuthController {
         authService.signUp(request);
     }
 
-    @PostMapping("/sign-in")
+    @PostMapping("/login")
     public LoginResponse signIn(
             @RequestBody SignInRequest request
     ) {

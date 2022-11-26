@@ -66,7 +66,7 @@ public class PostService {
 
         return PostResponse.builder()
                 .postId(post.getPostId()).title(post.getTitle())
-                .content(post.getContent()).author_id(post.getAuthor().getId())
+                .content(post.getContent()).author(post.getAuthor().getName())
                 .createdAt(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(post.getCreatedAt()))
                 .view(post.getView())
                 .attachmentUrls(post.getAttachmentUrls())
@@ -81,7 +81,7 @@ public class PostService {
                 .list(list.stream().map(it ->
                         PostResponse.builder()
                                 .postId(it.getPostId()).title(it.getTitle())
-                                .content(it.getContent()).author_id(it.getAuthor().getId())
+                                .content(it.getContent()).author(it.getAuthor().getName())
                                 .createdAt(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(it.getCreatedAt()))
                                 .view(it.getView())
                                 .attachmentUrls(it.getAttachmentUrls())
@@ -97,7 +97,7 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(PostNotFoundException::new);
 
-        if(post.getAuthor().equals(author)) throw PostWrongException.EXCEPTION;
+        if(!post.getAuthor().equals(author)) throw PostWrongException.EXCEPTION;
 
         post.modifyPost(request.getTitle(), request.getContent(), LocalDateTime.now());
 
