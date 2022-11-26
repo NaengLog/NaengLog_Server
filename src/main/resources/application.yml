@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/naenglog?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: jyj10241103*
+
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+
+jwt:
+  secret-key: efiudsiof1237sdjkfbkj1j2bjhjldjsfoas09sdfckjsabdfkj03rsdlkfjklsnlci837dsfhksjahcgiuewf23
+  access-exp: 10000
+#spring:
+#  datasource:
+#    url: jdbc:mysql://61.97.187.175:3306/naenglog?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    username: yongbin
+#    password: Yongbin123!
+#
+#  jpa:
+#    show-sql: true
+#    generate-ddl: true
+#    hibernate:
+#      ddl-auto: update
