@@ -1,5 +1,7 @@
 package com.homework.naenglog.domain.comment.service;
 
+import com.homework.naenglog.domain.auth.entity.User;
+import com.homework.naenglog.domain.auth.facade.UserFacade;
 import com.homework.naenglog.domain.comment.entity.Comment;
 import com.homework.naenglog.domain.comment.presentation.dto.CreateCommentRequest;
 import com.homework.naenglog.domain.comment.presentation.dto.response.CommentListResponse;
@@ -23,16 +25,19 @@ public class CommentService {
 
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final UserFacade userFacade;
 
     @Transactional(rollbackFor = RuntimeException.class)
     public Long createComment(Long postId, CreateCommentRequest request) {
+        User author = userFacade.queryUser(true);
+
         Post post = postRepository.findById(postId)
-                .orElseThrow(PostNotFoundException::new);
+                .orElseThrow(() -> PostNotFoundException.EXCEPTION);
 
         Comment comment = Comment.builder()
-                .author(request.getAuthor())
                 .comment(request.getComment())
                 .build();
+        comment.setAuthor(author);
         comment.setPost(post);
         post.addComment(comment);
 
@@ -40,13 +45,15 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public CommentListResponse getAllComment(Pageable pageable) {
-        Page<Comment> comments = commentRepository.findAll(pageable);
+    public CommentListResponse getAllComment(Pageable pageable, Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> PostNotFoundException.EXCEPTION);
+        Page<Comment> comments = commentRepository.findAllByPost(pageable, post);
 
         return CommentListResponse.builder()
                 .list(comments.stream().map(it ->
                                 CommentResponse.builder()
-                                        .author(it.getAuthor())
+                                        .author(it.getAuthor().getName())
                                         .comment(it.getComment())
                                         .createdAt(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(it.getCreatedAt()))
                                         .build()

@@ -39,10 +39,10 @@ public class Post {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @ColumnDefault("0")
     private int view;
+
     public void increaseView() {
-        this.view++;
+        this.view += 1;
     }
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)

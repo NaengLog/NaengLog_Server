@@ -1,5 +1,6 @@
 package com.homework.naenglog.domain.comment.entity;
 
+import com.homework.naenglog.domain.auth.entity.User;
 import com.homework.naenglog.domain.post.entity.Post;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -19,13 +20,18 @@ public class Comment {
     private Long commentId;
 
     @ManyToOne
+    @JoinColumn(name = "author_id")
+    private User author;
+    public void setAuthor(User author) {
+        this.author = author;
+    }
+
+    @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
     public void setPost(Post post) {
         this.post = post;
     }
-
-    private String author;
 
     private String comment;
 
@@ -33,8 +39,7 @@ public class Comment {
     private LocalDateTime createdAt;
 
     @Builder
-    public Comment(String author, String comment) {
-        this.author = author;
+    public Comment(String comment) {
         this.comment = comment;
     }
 }

@@ -13,6 +13,7 @@ import com.homework.naenglog.domain.post.repository.PostRepository;
 import com.homework.naenglog.domain.upload.entity.Upload;
 import com.homework.naenglog.domain.upload.exception.AttachmentNotCoincidenceException;
 import com.homework.naenglog.domain.upload.repository.UploadRepository;
+import com.homework.naenglog.global.utils.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -21,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,7 +49,7 @@ public class PostService {
 
         if(!request.getAttachments().isEmpty()) {
             List<Upload> list = request.getAttachments().stream().map(id -> uploadRepository.findById(id)
-                    .orElseThrow(AttachmentNotCoincidenceException::new)).collect(Collectors.toList());
+                    .orElseThrow(() -> AttachmentNotCoincidenceException.EXCEPTION)).collect(Collectors.toList());
             list.get(0).setPost(post);
             post.addAttachment(list);
         }
@@ -58,36 +58,24 @@ public class PostService {
 
     }
 
-    @Transactional(readOnly = true)
     public PostResponse getPost(Long postId) {
-        increaseViewPost(postId);
-        Post post = postRepository.findById(postId)
-                .orElseThrow(PostNotFoundException::new);
+        Post post = increaseViewPost(postId);
 
-        return PostResponse.builder()
-                .postId(post.getPostId()).title(post.getTitle())
-                .content(post.getContent()).author(post.getAuthor().getName())
-                .createdAt(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(post.getCreatedAt()))
-                .view(post.getView())
-                .attachmentUrls(post.getAttachmentUrls())
-                .build();
+        return ResponseUtil.getResponse(post);
+    }
+
+    @Transactional(readOnly = true)
+    public PostListResponse getPostByTitle(Pageable pageable, String title) {
+        Page<Post> list = postRepository.findAllByTitleContains(pageable, title);
+
+        return ResponseUtil.getListResponse(list.getContent());
     }
 
     @Transactional(readOnly = true)
     public PostListResponse getAllPost(Pageable pageable) {
         Page<Post> list = postRepository.findAll(pageable);
 
-        return PostListResponse.builder()
-                .list(list.stream().map(it ->
-                        PostResponse.builder()
-                                .postId(it.getPostId()).title(it.getTitle())
-                                .content(it.getContent()).author(it.getAuthor().getName())
-                                .createdAt(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(it.getCreatedAt()))
-                                .view(it.getView())
-                                .attachmentUrls(it.getAttachmentUrls())
-                                .build()
-                ).collect(Collectors.toList()))
-                .build();
+        return ResponseUtil.getListResponse(list.getContent());
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -95,7 +83,7 @@ public class PostService {
         User author = userFacade.queryUser(true);
 
         Post post = postRepository.findById(postId)
-                .orElseThrow(PostNotFoundException::new);
+                .orElseThrow(() -> PostNotFoundException.EXCEPTION);
 
         if(!post.getAuthor().equals(author)) throw PostWrongException.EXCEPTION;
 
@@ -109,17 +97,18 @@ public class PostService {
         User author = userFacade.queryUser(true);
 
         Post post = postRepository.findById(postId)
-                .orElseThrow(PostNotFoundException::new);
-        if(post.getAuthor().equals(author)) throw PostWrongException.EXCEPTION;
+                .orElseThrow(() -> PostNotFoundException.EXCEPTION);
+        if(!post.getAuthor().equals(author)) throw PostWrongException.EXCEPTION;
 
         author.getPostList().remove(post);
     }
 
-    public void increaseViewPost(Long postId) {
+    @Transactional(rollbackFor = Exception.class)
+    public Post increaseViewPost(Long postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(PostNotFoundException::new);
+                .orElseThrow(() -> PostNotFoundException.EXCEPTION);
         post.increaseView();
 
-        postRepository.save(post);
+        return postRepository.save(post);
     }
 }

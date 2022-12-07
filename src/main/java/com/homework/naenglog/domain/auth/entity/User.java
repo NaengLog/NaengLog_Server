@@ -1,5 +1,6 @@
 package com.homework.naenglog.domain.auth.entity;
 
+import com.homework.naenglog.domain.comment.entity.Comment;
 import com.homework.naenglog.domain.post.entity.Post;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -27,6 +28,12 @@ public class User {
     private List<Post> postList;
     public void addPost(Post post) {
         getPostList().add(post);
+    }
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> commentList;
+    public void addComment(Comment comment) {
+        getCommentList().add(comment);
     }
 
     @Builder

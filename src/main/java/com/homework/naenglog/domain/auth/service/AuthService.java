@@ -40,7 +40,7 @@ public class AuthService {
     @Transactional(rollbackFor = RuntimeException.class)
     public LoginResponse signIn(SignInRequest request) {
         User user = userRepository.findByUserId(request.getUserId())
-                .orElseThrow(() -> {throw UserNotFoundException.EXCEPTION;});
+                .orElseThrow(() -> UserNotFoundException.EXCEPTION);
 
         if(passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             return LoginResponse.builder()

@@ -39,6 +39,14 @@ public class PostController {
         return postService.getPost(postId);
     }
 
+    @GetMapping("/search")
+    public PostListResponse getPostByTitle(
+            Pageable pageable,
+            @RequestParam("title") String title
+    ) {
+        return postService.getPostByTitle(pageable, title);
+    }
+
     @PatchMapping("/update/{post-id}")
     public Long modifyPost(
             @PathVariable("post-id") Long postId,

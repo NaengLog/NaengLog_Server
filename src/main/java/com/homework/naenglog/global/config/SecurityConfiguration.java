@@ -31,8 +31,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // jwt token으로 인증하므로 세션은 필요없으므로 생성안함.
                 .and()
                 .authorizeRequests() // 다음 리퀘스트에 대한 사용권한 체크
-                .antMatchers("/user/login", "/user/register").permitAll()
+                // 유저
+                .antMatchers(HttpMethod.POST, "/user/login", "/user/register").permitAll()
+                // 글쓰기
+                .antMatchers(HttpMethod.POST, "/post/**").authenticated()
+                .antMatchers(HttpMethod.PATCH, "/post/**").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/post/**").authenticated()
+                
                 .antMatchers(HttpMethod.GET, "/post/**").permitAll()
+                // 댓글
+                .antMatchers(HttpMethod.GET, "/comment/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/comment/**").authenticated()
+                // 이미지 업로드
+                .antMatchers(HttpMethod.POST, "/upload/attachments/**").authenticated()
                 .antMatchers(HttpMethod.GET, "/upload/attachments/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
@@ -40,7 +51,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() { // 비밀번호 암호화
         return new BCryptPasswordEncoder();
     }
 

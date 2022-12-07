@@ -8,6 +8,4 @@ public class CreateCommentRequest {
 
     private String comment;
 
-    private String author;
-
 }

@@ -24,9 +24,12 @@ public class CommentController {
         return commentService.createComment(postId, request);
     }
 
-    @GetMapping("/")
-    public CommentListResponse getAllComment(Pageable pageable) {
-        return commentService.getAllComment(pageable);
+    @GetMapping("/{post-id}")
+    public CommentListResponse getAllComment(
+            @PathVariable("post-id") Long postId,
+            Pageable pageable
+    ) {
+        return commentService.getAllComment(pageable, postId);
     }
 
 }

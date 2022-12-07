@@ -39,7 +39,7 @@ public class UploadService {
     @Transactional(readOnly = true, rollbackFor = RuntimeException.class)
     public ResponseEntity<byte[]> getAttachment(Long id) {
         Upload upload = uploadRepository.findById(id)
-                .orElseThrow(AttachmentNotFoundException::new);
+                .orElseThrow(() -> AttachmentNotFoundException.EXCEPTION);
 
         String contentDisposition = String.format("attachment; filename=\"%s\"", upload.getClientDownloadName());
 
